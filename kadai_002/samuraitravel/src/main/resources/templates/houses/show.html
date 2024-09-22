@@ -163,7 +163,7 @@
                                  <div style="text-align: center;">
 	                                 <h2 style="margin:5px 0 15px 0;">レビュー</h2>
 	                                 <form method="get" th:action="@{/houses/register/__${house.getId()}__}" th:object="${reservationInputForm}">
-		                                 <div class="form-group" th:if="!${hasReviewed}">
+		                                 <div class="form-group"  sec:authorize="hasRole('ROLE_GENERAL')" th:if="!${hasReviewed}">
 		                                 	<button type="submit" style="width:240px; margin:10px 0 15px 0;" class="btn text-white shadow-sm samuraitravel-btn">レビューを投稿する</button>
 		                                 </div>
 	                                 </form>
