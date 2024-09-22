@@ -1,0 +1,74 @@
+ <!DOCTYPE html>
+ <html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+     <head>
+         <div th:replace="~{fragment :: meta}"></div>   
+              
+         <div th:replace="~{fragment :: styles}"></div>
+         
+         <title>レビュー編集</title>       
+     </head>
+     <body>
+         <div class="samuraitravel-wrapper">
+             <!-- ヘッダー -->
+             <div th:replace="~{fragment :: header}"></div>
+             
+             <main>
+                 <div class="container pt-4 pb-5 samuraitravel-container">
+                     <div class="row justify-content-center">
+                         <div class="col-xl-5 col-lg-6 col-md-8">
+                             <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                                 <ol class="breadcrumb mb-0"> 
+                                     <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                                 	 <li class="breadcrumb-item"><a th:href="@{/houses}">民宿一覧</a></li>
+                             		 <li class="breadcrumb-item"><a th:href="@{/houses/__${house.getId()}__}">民宿詳細</a></li>
+                             		 <li class="breadcrumb-item active" aria-current="page">レビュー編集</li>
+                                 </ol>
+                             </nav> 
+                            
+                             <h1 class="mb-4 text-center" th:text="${house.getName()}+のレビュー編集"></h1>      
+ 
+                             <form method="post" th:action="@{/reviews/update/__${house.getId()}__/__${reviewEditForm.getId()}__}" th:object="${reviewEditForm}" enctype="multipart/form-data">                                                            
+								<input type="hidden" th:field="*{id}">
+                                 <div class="form-group row mb-3">
+                                     <div class="col-md-4">
+                                         <label for="starrank" class="col-form-label text-md-left fw-bold">評価</label>
+                                     </div>
+                                      <div class="col-md-8">                            
+                                         <div th:if="${#fields.hasErrors('starrank')}" class="text-danger small mb-2" th:errors="*{starrank}"></div>                                        
+                                         <div class="form-group mb-3">
+											 <select style="color:#f8b500" class="form-control form-select" th:field="*{starrank}" >
+                                                 <option value="5" th:selected="${starrank == 5}">&#9733;&#9733;&#9733;&#9733;&#9733;</option>
+                                                 <option value="4" th:selected="${starrank == 4}">&#9733;&#9733;&#9733;&#9733;</option>
+                                                 <option value="3" th:selected="${starrank == 3}">&#9733;&#9733;&#9733;</option>
+                                                 <option value="2" th:selected="${starrank == 2}">&#9733;&#9733;</option>
+                                                 <option value="1" th:selected="${starrank == 1}">&#9733;</option>
+                                             </select>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="form-group row mb-3">
+                                     <div class="col-md-4">
+                                         <label for="reviewcomment" class="col-form-label text-md-left fw-bold">コメント</label>
+                                     </div>
+                                      <div class="col-md-8">                            
+                                         <div th:if="${#fields.hasErrors('reviewcomment')}" class="text-danger small mb-2" th:errors="*{reviewcomment}"></div>                                        
+                                         <textarea class="form-control" th:field="*{reviewcomment}" cols="30" rows="5"></textarea>
+                                     </div>
+                                 </div>
+                                
+                                 <div class="form-group d-flex justify-content-center my-4">
+                                     <button type="submit" class="btn text-white shadow-sm w-50 samuraitravel-btn">更新</button>
+                                 </div>
+                            </form>                                                                         
+
+                         </div>
+                     </div>
+                 </div>                
+             </main>
+             <!-- フッター -->
+             <div th:replace="~{fragment :: footer}"></div>
+         </div>    
+         
+         <div th:replace="~{fragment :: scripts}"></div>      
+     </body>
+ </html>

@@ -1,0 +1,118 @@
+ <!DOCTYPE html>
+ <html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">    
+     <head>
+         <div th:replace="~{fragment :: meta}"></div>                 
+         <div th:replace="~{fragment :: styles}"></div>
+         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+           
+         <title>レビュー一覧</title>   
+     </head>
+     <body>
+         <div class="samuraitravel-wrapper">
+             <!-- ヘッダー -->
+             <div th:replace="~{fragment :: header}"></div>
+             
+             <main>
+                 <div class="container pt-4 pb-5 samuraitravel-container">
+                     <div class="row justify-content-center">
+                         <div class="col-xxl-9 col-xl-10 col-lg-11">
+                             <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                                 <ol class="breadcrumb mb-0">                        
+                                     <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                                     <li class="breadcrumb-item"><a th:href="@{/houses}">民宿一覧</a></li>
+                                     <li class="breadcrumb-item"><a th:href="@{/houses/__${house.getId()}__}">民宿詳細</a></li>
+                                     <li class="breadcrumb-item active" aria-current="page">レビュー一覧</li>
+                                 </ol>
+                             </nav> 
+                             
+                             <h1 class="mb-4 text-center" th:text="${house.getName()}+のレビュー一覧"></h1>                                                           
+                       <!--      
+                             <div th:if="${errorMessage}" class="alert alert-danger">
+                                 <span th:text="${errorMessage}"></span>
+                             </div>                                                                         
+                           -->  
+                             
+                                 <!--レビュー-->
+                                 <div class="row row-cols-2 g-2 ">                             
+                         			<div class="col" th:each="review : ${reviewPage}">
+										 <div class="card h-100">                                                                        
+                                     		<div class="card-body">
+												<div class="d-flex justify-content-between align-items-center">                                
+	                                         		<h3 class="card-title mb-0" th:text="${review.getUser.getName()}"></h3>
+													<div th:if="${review.getUser.getId()} == ${loginUserId} and ${hasReviewed}">
+														
+								                        <a href="#" th:href="@{/houses/edit/__${house.getId()}__/__${review.getId()}__}">編集</a>
+								                        <a href="#" class="samuraitravel-link-danger" data-bs-toggle="modal" th:data-bs-target="${'#deleteHouseModal' + review.getId()}">削除</a>
+													</div>
+													<!-- 削除用モーダル -->
+			                                         <div class="modal fade" th:id="${'deleteHouseModal' + review.getId()}" tabindex="-1" th:aria-labelledby="${'deleteHouseModalLabel' + review.getId()}">
+			                                             <div class="modal-dialog">
+			                                                 <div class="modal-content">
+			                                                     <div class="modal-header">
+			                                                         <h5 class="modal-title" th:id="${'deleteHouseModalLabel' + review.getId()}" th:text="${house.getName() + 'のレビューを削除してもよろしいですか？'}"></h5>
+			                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
+			                                                     </div>
+			                                                     <div class="modal-footer">
+			                                                         <form method="post"th:action="@{/reviews/delete/__${house.getId()}__/__${review.getId()}__}">
+			                                                             <button type="submit" class="btn samuraitravel-btn-danger text-white shadow-sm">削除</button>
+			                                                         </form>
+			                                                     </div>
+			                                                 </div>
+			                                             </div>
+                                     				</div>
+
+												</div>
+                                         		<span class="star-rating" th:switch="${review.getStarrank()}">
+												    <span th:case="1">&#9733;&#9734;&#9734;&#9734;&#9734;</span>
+												    <span th:case="2">&#9733;&#9733;&#9734;&#9734;&#9734;</span>
+												    <span th:case="3">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
+												    <span th:case="4">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+												    <span th:case="5">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+												</span>
+                                         		<p class="card-text mb-1">
+                                             		<small class="text-muted" th:text="${#dates.format(review.getUpdatedAt(), 'yyyy年M月d日')}"></small>                                            
+                                         		</p>
+                                         		<p class="card-text">
+                                             		<span th:text="${review.getReviewcomment()}"></span>                                            
+                                         		</p>                                    
+                                     		</div>
+                                 		</div>
+								 	</div>
+								 </div>
+								 <!--レビュー--> 
+								 
+								 <!-- ページネーション -->
+	                             <div style="margin:15px 0 0 0;" th:if="${reviewPage.getTotalPages() > 1}" class="d-flex justify-content-center">
+	                                 <nav aria-label="レビュー一覧ページ">
+	                                     <ul class="pagination">
+	                                         <li class="page-item">
+	                                             <span th:if="${reviewPage.isFirst()}" class="page-link disabled">前</span>
+	                                             <a th:unless="${reviewPage.isFirst()}" th:href="@{/reviews/__${house.getId()}__}" class="page-link samuraitravel-page-link">前</a>
+	                                         </li>
+	                                         <li th:each="i : ${#numbers.sequence(0, reviewPage.getTotalPages() - 1)}" class="page-item">
+	                                             <span th:if="${i == reviewPage.getNumber()}" class="page-link active samuraitravel-active" th:text="${i + 1}"></span>
+	                                             <a th:unless="${i == reviewPage.getNumber()}" th:href="@{/reviews/__${house.getId()}__(page = ${i},)}" class="page-link samuraitravel-page-link" th:text="${i + 1}"></a>
+	                                         </li>
+	                                         <li class="page-item">                        
+	                                             <span th:if="${reviewPage.isLast()}" class="page-link disabled">次</span>
+	                                             <a th:unless="${reviewPage.isLast()}" th:href="@{/reviews/__${house.getId()}__(page = ${reviewPage.getNumber() + 1})}" class="page-link samuraitravel-page-link">次</a>
+	                                         </li>
+	                                     </ul>
+	                                 </nav> 
+	                             </div>                                                                                
+
+                         </div>
+                     </div>
+                 </div>
+             </main>
+             
+             <!-- フッター -->
+             <div th:replace="~{fragment :: footer}"></div>
+         </div>    
+         <div th:replace="~{fragment :: scripts}"></div>  
+		<!-- Flatpickr -->
+         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+         <script th:src="@{/js/flatpickr.js}"></script> 
+   </body>
+ </html>
